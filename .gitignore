@@ -1,0 +1,15 @@
+.idea
+/*/.idea
+
+/*/target
+/*/api-gateway.iml
+/*/inventory-service.iml
+/*/order-service.iml
+/*/HELP.md
+
+/*/data
+/*/logs
+/*/tmp
+
+/*/.mvn
+/*/.DS_Store
