@@ -9,6 +9,15 @@
 
 /*/data
 /*/logs
+.dblwr
+*ib
+binlog*
+compiler.xml
+encodings.xml
+misc.xml
+*.ibd
+*/mysql
+ibdata1
 /*/tmp
 
 /*/.mvn

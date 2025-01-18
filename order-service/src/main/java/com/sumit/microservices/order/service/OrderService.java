@@ -42,8 +42,12 @@ public class OrderService {
 
             // send a message to the kafka topic
             // order Number and email needed
-            OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(order.getOrderNumber(),
-                    orderRequest.userDetails().email());
+            OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent();
+            orderPlacedEvent.setOrderNumber(order.getOrderNumber());
+            orderPlacedEvent.setEmail(orderRequest.userDetails().email());
+            orderPlacedEvent.setFirstName(orderRequest.userDetails().firstName());
+            orderPlacedEvent.setLastName(orderRequest.userDetails().lastName());
+
             // send the message to the kafka topic
             log.info("Started -> Sending order placed event: {} to kafka topic: {} ",
                     orderPlacedEvent, "order-placed");
