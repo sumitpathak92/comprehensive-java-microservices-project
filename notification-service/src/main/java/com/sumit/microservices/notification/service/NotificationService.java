@@ -23,11 +23,11 @@ public class NotificationService {
     public void listen(com.sumit.microservices.order.event.OrderPlacedEvent orderPlacedEvent) throws AddressException {
         log.info("Got message from order placed topic {} ", orderPlacedEvent);
 
-        // send email
+        // define recipient email address
         Address address = new InternetAddress(orderPlacedEvent.getEmail().toString());
 
         MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
-            mimeMessage.setFrom("springshop@email.com");
+            mimeMessage.setFrom("sumit.pathak@gmail.com");
             mimeMessage.setRecipient(Message.RecipientType.TO, address);
             mimeMessage.setSubject(String.format("Your order %s has been placed", orderPlacedEvent.getOrderNumber()));
             mimeMessage.setText(String.format(
