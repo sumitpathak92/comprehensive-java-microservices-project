@@ -89,6 +89,29 @@ public class Routes {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> bhagwadGitaServiceRoute() {
+        return GatewayRouterFunctions.route("bhagwad_gita_service")
+                .route(RequestPredicates.path(""), HandlerFunctions.http("http" +
+                        "://localhost:8084"))
+                .filter(CircuitBreakerFilterFunctions.circuitBreaker(
+                        "bhagwad_gita_service_circuit_breaker", URI.create("forward:/fallbackRoute")))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> bhagwadGitaServiceSwaggerRoute() {
+        return GatewayRouterFunctions.route("bhagwad_gita_service_swagger")
+                .route(RequestPredicates.path("aggregate/bhagwad-gita-service/v3/api-docs"),
+                        HandlerFunctions.http(
+                                "http" +
+                                        "://localhost:8084"))
+                .filter(CircuitBreakerFilterFunctions.circuitBreaker(
+                        "bhagwad_gita_service_swagger_circuit_breaker", URI.create("forward" +
+                                ":/fallbackRoute")))
+                .filter(setPath("/api-docs")).build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> fallBackRoute() {
         return GatewayRouterFunctions.route("fallbackRoute")
                 .GET("/fallback",
