@@ -8,11 +8,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.sumit.microservices</groupId>
-    <artifactId>comprehensive-java-microservices-project</artifactId>
+    <artifactId>vedpulse</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>comprehensive-java-microservices-project</name>
+    <name>vedpulse</name>
     <modules>
         <module>api-gateway</module>
         <module>product-service</module>
