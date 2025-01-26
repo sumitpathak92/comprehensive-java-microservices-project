@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/shloka")
@@ -20,8 +21,9 @@ public class ShlokaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Shloka addShloka(@RequestBody ShlokaRequest shlokaRequest) {
-        return shlokaService.createShloka(shlokaRequest);
+    public CompletableFuture<ResponseEntity<ShlokaResponse>> addShloka(@RequestBody ShlokaRequest shlokaRequest) {
+        return CompletableFuture.supplyAsync(() -> shlokaService.createShloka(shlokaRequest).toCompletableFuture().join())
+                .thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/chapter/{chapter}/verse/{verse}")
