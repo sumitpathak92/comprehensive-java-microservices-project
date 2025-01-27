@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "OrderPlacedEvent",
+  "namespace": "com.sumit.microservices.gita.event",
+  "fields": [
+    {
+      "name": "chapter",
+      "type": "integer"
+    },
+    {
+      "name": "verse",
+      "type": "integer"
+    },
+    {
+      "name": "shloka",
+      "type": "string"
+    },
+    {
+      "name": "englishText",
+      "type": "string"
+    },
+    {
+      "name": "translation",
+      "type": "string"
+    },
+    {
+      "name": "commentary",
+      "type": "string"
+    }
+  ]
+}

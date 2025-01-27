@@ -2,7 +2,6 @@ package com.sumit.microservices.gita.controller;
 
 import com.sumit.microservices.gita.dto.ShlokaRequest;
 import com.sumit.microservices.gita.dto.ShlokaResponse;
-import com.sumit.microservices.gita.model.Shloka;
 import com.sumit.microservices.gita.service.ShlokaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
