@@ -7,6 +7,7 @@ import com.sumit.microservices.gita.model.Shloka;
 import com.sumit.microservices.gita.repository.ShlokaSangraha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,21 +48,19 @@ public class ShlokaService {
                 .build();
     }
 
-    public ShlokaResponse getShlokaByChapterAndVerse(Integer chapter, Integer verse) {
-        ShlokaResponse shlokaResponse = shlokaSangraha.getShlokaByChapterAndVerse(chapter, verse);
-        log.info(":::::: Shloka has been retrieved :::::: {} ", shlokaResponse);
-        return shlokaResponse;
+    public CompletionStage<ShlokaResponse> getShlokaByChapterAndVerse(Integer chapter, Integer verse) {
+        log.info(":::::: Shloka has been retrieved :::::::: ");
+        return CompletableFuture.supplyAsync(() -> shlokaSangraha.getShlokaByChapterAndVerse(chapter, verse));
     }
 
-    public List<ShlokaResponse> getAllVersesByChapter(Integer chapter) {
-        List<ShlokaResponse> shlokaResponses = shlokaSangraha.getAllVersesByChapter(chapter);
-        log.info(":::::: Shlokas have been retrieved :::::: {} ", shlokaResponses);
-        return shlokaResponses;
+    public CompletionStage<List<ShlokaResponse>> getAllVersesByChapter(Integer chapter) {
+        log.info(":::::: Shlokas have been retrieved :::::: ");
+        return CompletableFuture.supplyAsync(() -> shlokaSangraha.getAllVersesByChapter(chapter));
     }
 
-    public boolean doesShlokaExist(Integer chapter, Integer verse) {
+    public CompletionStage<Boolean> doesShlokaExist(Integer chapter, Integer verse) {
         log.info("::::: Checking if shloka exists :::::");
-        return getShlokaByChapterAndVerse(chapter, verse) != null;
+        return CompletableFuture.supplyAsync(() -> getShlokaByChapterAndVerse(chapter, verse) != null);
     }
 
 }

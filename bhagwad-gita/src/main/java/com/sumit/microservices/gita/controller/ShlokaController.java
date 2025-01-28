@@ -27,22 +27,26 @@ public class ShlokaController {
 
     @GetMapping("/chapter/{chapter}/verse/{verse}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ShlokaResponse> getShlokaByChapterAndVerse(@PathVariable("chapter") Integer chapter,
-                                                                     @PathVariable("verse") Integer verse) {
-        return ResponseEntity.ok().body(shlokaService.getShlokaByChapterAndVerse(chapter, verse));
+    public CompletableFuture<ResponseEntity<ShlokaResponse>> getShlokaByChapterAndVerse(@PathVariable(
+            "chapter") Integer chapter, @PathVariable("verse") Integer verse) {
+        return CompletableFuture.supplyAsync(() -> shlokaService.getShlokaByChapterAndVerse(chapter,
+                verse).toCompletableFuture().join()).thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/chapter/{chapter}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ShlokaResponse>> getAllVersesByChapter(@PathVariable("chapter") Integer chapter) {
-        return ResponseEntity.ok().body(shlokaService.getAllVersesByChapter(chapter));
+    public CompletableFuture<ResponseEntity<List<ShlokaResponse>>> getAllVersesByChapter(@PathVariable(
+            "chapter") Integer chapter) {
+        return CompletableFuture.supplyAsync(() -> shlokaService.getAllVersesByChapter(chapter).toCompletableFuture().join())
+                .thenApply(ResponseEntity::ok);
     }
 
     @GetMapping("/findby/chapter/{chapter}/verse/{verse}")
     @ResponseStatus(HttpStatus.OK)
-    public boolean doesShlokaExist(@PathVariable("chapter") Integer chapter,
+    public CompletableFuture<ResponseEntity<Boolean>> doesShlokaExist(@PathVariable("chapter") Integer chapter,
                                    @PathVariable("verse") Integer verse) {
-        return shlokaService.doesShlokaExist(chapter, verse);
+        return CompletableFuture.supplyAsync(() -> shlokaService.doesShlokaExist(chapter, verse).toCompletableFuture().join())
+                .thenApply(ResponseEntity::ok);
     }
 
 }
