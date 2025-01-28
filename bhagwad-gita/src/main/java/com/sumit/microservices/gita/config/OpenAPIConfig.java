@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenAPIConfig {
 
     @Bean
-    public OpenAPI productServiceAPI() {
+    public OpenAPI bhagwadGitaServiceAPI() {
         return new OpenAPI()
                 .info(new Info().title("Bhagwad Gita Service API")
                         .version("0.0.1")

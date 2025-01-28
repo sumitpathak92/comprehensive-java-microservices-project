@@ -7,9 +7,12 @@ import com.sumit.microservices.gita.model.Shloka;
 import com.sumit.microservices.gita.repository.ShlokaSangraha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 
 @Service
@@ -19,9 +22,15 @@ public class ShlokaService {
 
     private final ShlokaSangraha shlokaSangraha;
 
-    public Shloka createShloka(ShlokaRequest shlokaRequest) {
-        System.out.println("shloka request object ::::  "+shlokaRequest);
-        Shloka shloka = Shloka.builder()
+    public CompletionStage<ShlokaResponse> createShloka(ShlokaRequest shlokaRequest) {
+        shlokaSangraha.save(buildShlokaObject(shlokaRequest));
+        log.info(":::::: Shloka has been saved :::::: ");
+        return CompletableFuture.supplyAsync(() -> buildShlokaResponse(shlokaRequest)); // for now
+        // returning just the shloka object instead of ShlokaResponse object
+    }
+
+    private static Shloka buildShlokaObject(ShlokaRequest shlokaRequest) {
+        return Shloka.builder()
                 .chapter(shlokaRequest.chapter())
                 .verse(shlokaRequest.verse())
                 .shloka(shlokaRequest.shloka())
@@ -29,27 +38,29 @@ public class ShlokaService {
                 .commentary(shlokaRequest.commentary())
                 .translation(shlokaRequest.translation())
                 .build();
-
-        shlokaSangraha.save(shloka);
-        log.info(":::::: Shloka has been saved :::::: {} ", shloka);
-        return shloka; // for now returning just the shloka object instead of ShlokaResponse object
     }
 
-    public ShlokaResponse getShlokaByChapterAndVerse(Integer chapter, Integer verse) {
-        ShlokaResponse shlokaResponse = shlokaSangraha.getShlokaByChapterAndVerse(chapter, verse);
-        log.info(":::::: Shloka has been retrieved :::::: {} ", shlokaResponse);
-        return shlokaResponse;
+    private static ShlokaResponse buildShlokaResponse(ShlokaRequest shlokaRequest) {
+        return ShlokaResponse.builder()
+                .shloka(shlokaRequest.shloka())
+                .chapter(shlokaRequest.chapter())
+                .verse(shlokaRequest.verse())
+                .build();
     }
 
-    public List<ShlokaResponse> getAllVersesByChapter(Integer chapter) {
-        List<ShlokaResponse> shlokaResponses = shlokaSangraha.getAllVersesByChapter(chapter);
-        log.info(":::::: Shlokas have been retrieved :::::: {} ", shlokaResponses);
-        return shlokaResponses;
+    public CompletionStage<ShlokaResponse> getShlokaByChapterAndVerse(Integer chapter, Integer verse) {
+        log.info(":::::: Shloka has been retrieved :::::::: ");
+        return CompletableFuture.supplyAsync(() -> shlokaSangraha.getShlokaByChapterAndVerse(chapter, verse));
     }
 
-    public boolean doesShlokaExist(Integer chapter, Integer verse) {
+    public CompletionStage<List<ShlokaResponse>> getAllVersesByChapter(Integer chapter) {
+        log.info(":::::: Shlokas have been retrieved :::::: ");
+        return CompletableFuture.supplyAsync(() -> shlokaSangraha.getAllVersesByChapter(chapter));
+    }
+
+    public CompletionStage<Boolean> doesShlokaExist(Integer chapter, Integer verse) {
         log.info("::::: Checking if shloka exists :::::");
-        return getShlokaByChapterAndVerse(chapter, verse) != null;
+        return CompletableFuture.supplyAsync(() -> getShlokaByChapterAndVerse(chapter, verse) != null);
     }
 
 }
