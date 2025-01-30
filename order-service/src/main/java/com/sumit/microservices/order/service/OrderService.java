@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static com.sumit.microservices.order.client.InventoryClient.log;
+import static java.util.concurrent.CompletableFuture.runAsync;
 
 @Service
 @RequiredArgsConstructor
@@ -48,17 +49,16 @@ public class OrderService {
         }
     }
 
-    private void sendOrderEventToKafka(OrderRequest orderRequest, Order order) {
-        // send a message to the kafka topic
-        // order Number and email needed
+    private CompletionStage<Void> sendOrderEventToKafka(OrderRequest orderRequest, Order order) {
         OrderPlacedEvent orderPlacedEvent = buildOrderPlacedEvent(orderRequest, order);
 
-        // send the message to the kafka topic
-        log.info("Started -> Sending order placed event: {} to kafka topic: {} ",
-                orderPlacedEvent, "order-placed");
-        kafkaTemplate.send("order-placed", orderPlacedEvent);
-        log.info("End -> Sending order placed event: {} to kafka topic: {} ", orderPlacedEvent,
-                "order-placed");
+        log.info("Started -> Sending order placed event: {} to Kafka topic: {}", orderPlacedEvent, "order-placed");
+
+        return CompletableFuture.runAsync(() ->
+                kafkaTemplate.send("order-placed", orderPlacedEvent)
+        ).thenRun(() ->
+                log.info("End -> Successfully sent order placed event: {} to Kafka topic: {}", orderPlacedEvent, "order-placed")
+        );
     }
 
     private static OrderPlacedEvent buildOrderPlacedEvent(OrderRequest orderRequest, Order order) {
