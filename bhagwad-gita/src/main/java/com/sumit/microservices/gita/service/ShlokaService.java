@@ -3,10 +3,12 @@ package com.sumit.microservices.gita.service;
 
 import com.sumit.microservices.gita.dto.ShlokaRequest;
 import com.sumit.microservices.gita.dto.ShlokaResponse;
+import com.sumit.microservices.gita.event.ShlokaEvent;
 import com.sumit.microservices.gita.model.Shloka;
 import com.sumit.microservices.gita.repository.ShlokaSangraha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,22 @@ import java.util.concurrent.CompletionStage;
 public class ShlokaService {
 
     private final ShlokaSangraha shlokaSangraha;
+    private final KafkaTemplate<String, ShlokaEvent> kafkaTemplate;
 
     public CompletionStage<ShlokaResponse> createShloka(ShlokaRequest shlokaRequest) {
         shlokaSangraha.save(buildShlokaObject(shlokaRequest));
         log.info(":::::: Shloka has been saved :::::: ");
+
+        // publish to Kafka
+        ShlokaEvent shlokaEvent = new ShlokaEvent(shlokaRequest.chapter(), shlokaRequest.verse(),
+                shlokaRequest.shloka(), shlokaRequest.englishText(), shlokaRequest.translation(),
+                shlokaRequest.commentary());
+        log.info(":::::: Publishing shloka event {} to Kafka topic order placed :::::: ",
+                shlokaEvent);
+        kafkaTemplate.send("shloka-event", shlokaEvent);
+        log.info(":::::: End  - Published shloka event {} to Kafka topic order placed :::::: ",
+                shlokaEvent);
+
         return CompletableFuture.supplyAsync(() -> buildShlokaResponse(shlokaRequest)); // for now
         // returning just the shloka object instead of ShlokaResponse object
     }
