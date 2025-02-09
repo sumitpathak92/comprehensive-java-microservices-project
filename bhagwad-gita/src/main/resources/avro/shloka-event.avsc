@@ -1,15 +1,15 @@
 {
   "type": "record",
-  "name": "OrderPlacedEvent",
+      "name": "ShlokaEvent",
   "namespace": "com.sumit.microservices.gita.event",
   "fields": [
     {
       "name": "chapter",
-      "type": "integer"
+      "type": "int"
     },
     {
       "name": "verse",
-      "type": "integer"
+      "type": "int"
     },
     {
       "name": "shloka",
